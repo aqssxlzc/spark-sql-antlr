@@ -154,6 +154,16 @@ class SparksqlVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by SparksqlParser#aggregate_windowed_function.
+    def visitAggregate_windowed_function(self, ctx:SparksqlParser.Aggregate_windowed_functionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by SparksqlParser#all_distinct_expression.
+    def visitAll_distinct_expression(self, ctx:SparksqlParser.All_distinct_expressionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by SparksqlParser#constant.
     def visitConstant(self, ctx:SparksqlParser.ConstantContext):
         return self.visitChildren(ctx)

@@ -15,5 +15,5 @@ $ tox -r
 
 ## Generate parser (python)
 
-$ antlr4 -o py_parser -Dlanguage=Python3 -visitor Sparksql.g4
+$ antlr4 -Dlanguage=Python3 -visitor Sparksql.g4
 

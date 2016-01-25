@@ -160,6 +160,27 @@ expression
     | op=('+' | '-') expression
     | expression op=('+' | '-' | '&' | '^' | '|') expression
     | expression comparison_operator expression
+    | aggregate_windowed_function
+    ;
+
+aggregate_windowed_function
+    : AVG '(' all_distinct_expression ')'
+    | CHECKSUM_AGG '(' all_distinct_expression ')'
+    | GROUPING '(' expression ')'
+    | GROUPING_ID '(' expression_list ')'
+    | MAX '(' all_distinct_expression ')'
+    | MIN '(' all_distinct_expression ')'
+    | SUM '(' all_distinct_expression ')'
+    | STDEV '(' all_distinct_expression ')'
+    | STDEVP '(' all_distinct_expression ')'
+    | VAR '(' all_distinct_expression ')'
+    | VARP '(' all_distinct_expression ')'
+    | COUNT '(' ('*' | all_distinct_expression) ')'
+    | COUNT_BIG '(' ('*' | all_distinct_expression) ')'
+    ;
+
+all_distinct_expression
+    : (ALL | DISTINCT)? expression
     ;
 
 constant

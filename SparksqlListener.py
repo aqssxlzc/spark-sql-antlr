@@ -269,6 +269,24 @@ class SparksqlListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SparksqlParser#aggregate_windowed_function.
+    def enterAggregate_windowed_function(self, ctx:SparksqlParser.Aggregate_windowed_functionContext):
+        pass
+
+    # Exit a parse tree produced by SparksqlParser#aggregate_windowed_function.
+    def exitAggregate_windowed_function(self, ctx:SparksqlParser.Aggregate_windowed_functionContext):
+        pass
+
+
+    # Enter a parse tree produced by SparksqlParser#all_distinct_expression.
+    def enterAll_distinct_expression(self, ctx:SparksqlParser.All_distinct_expressionContext):
+        pass
+
+    # Exit a parse tree produced by SparksqlParser#all_distinct_expression.
+    def exitAll_distinct_expression(self, ctx:SparksqlParser.All_distinct_expressionContext):
+        pass
+
+
     # Enter a parse tree produced by SparksqlParser#constant.
     def enterConstant(self, ctx:SparksqlParser.ConstantContext):
         pass
