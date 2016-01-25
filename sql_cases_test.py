@@ -1,58 +1,6 @@
 
 from unittest import TestCase
-from antlr4 import *
-from antlr4.error.ErrorListener import ErrorListener
-from antlr4.tree.Trees import Trees
-from SparksqlLexer import SparksqlLexer
-from SparksqlParser import SparksqlParser
-from SparksqlVisitor import SparksqlVisitor
-
-
-class CustomVisitor1(SparksqlVisitor):
-
-    def __init__(self):
-        super(CustomVisitor1, self).__init__()
-
-    def visitSelect_statement(self, ctx:SparksqlParser.Select_statementContext):
-        print('select begin')
-        return self.visitChildren(ctx)
-
-
-class CustomErrorListener(ErrorListener):
-
-    def __init__(self):
-        super(CustomErrorListener, self).__init__()
-
-    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        raise Exception('Error: %s; Line: %s, Col: %s' % (msg, line, column))
-
-
-class Parser1(object):
-
-    def __init__(self):
-
-        self.is_valid = False
-        self.error = None
-        self.tree = None
-        self.tree_str = None
-
-    def parse(self, sql):
-
-        in_stream = InputStream(sql)
-        lexer = SparksqlLexer(in_stream)
-        token_stream = CommonTokenStream(lexer)
-
-        try:
-
-            parser = SparksqlParser(token_stream)
-            parser._listeners = [CustomErrorListener()]
-            self.tree = parser.select_statement()
-            self.tree_str = Trees.toStringTree(self.tree, None, parser)
-            self.is_valid = True
-
-        except Exception as ex:
-            self.is_valid = False
-            self.error = ex
+from parser import Parser1
 
 
 sql_cases = [
@@ -74,6 +22,7 @@ sql_cases = [
     #,{ 'sql': '', 'expected': True }
 ]
 
+
 class TestSqlCases(TestCase):
 
     def test_all_cases(self):
@@ -89,53 +38,24 @@ class TestSqlCases(TestCase):
             print("Result %s, Expected: %s, Sql: %s" % (p.is_valid, expected, sql))
 
         print('end')
-
-    def test_case1(self):
-
-        sql_case = sql_cases[12]
-        sql = sql_case['sql']
-        expected = sql_case['expected']
-
-        p = Parser1()
-        p.parse(sql)
-        self.assertEqual(p.is_valid, expected)
-
-        print(p.tree_str)
-        visitor = CustomVisitor1()
-        visitor.visit(p.tree)
-
-        self.assertTrue(True)
+    #
+    # def test_case1(self):
+    #
+    #     sql_case = sql_cases[12]
+    #     sql = sql_case['sql']
+    #     expected = sql_case['expected']
+    #
+    #     p = Parser1()
+    #     p.parse(sql)
+    #     self.assertEqual(p.is_valid, expected)
+    #
+    #     print(p.tree_str)
+    #     visitor = CustomVisitor1()
+    #     visitor.visit(p.tree)
+    #
+    #     self.assertTrue(True)
 
     def test_af(self):
-
-        sql = """
-        SELECT
-            chromosome
-            ,position
-            ,ref
-            ,alt
-            ,sample_id
-            ,CASE WHEN gt0 = '1' AND gt1 = '1' then 2 else 1 END as allele_count
-        FROM
-            vcf.samples as s
-        WHERE
-            s.filter = 'PASS'
-        """
-
-        sql = """
-        SELECT
-            v.chromosome
-            ,v.position
-            ,v.ref
-            ,alt
-            ,sum(allele_count) / (count (distinct sample_id)) as allele_frequency
-        FROM Tab1
-        GROUP BY
-            chromosome
-            ,position
-            ,ref
-            ,alt
-        """
 
         sql = """
         SELECT
@@ -163,10 +83,6 @@ class TestSqlCases(TestCase):
             ,alt
         limit 10
         """
-
-        # sql = """
-        # select a.c0, a.c1, b.c0, b.c1 from table_a as a inner join table_b as b on a.c0=b.c0
-        # """
 
         p = Parser1()
         p.parse(sql)
