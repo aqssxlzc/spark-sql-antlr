@@ -1,7 +1,8 @@
 
 grammar Sparksql;
-
-root: select_statement|create_statement|drop_statement
+root:clause (';' clause)*
+    ;
+clause: select_statement|create_statement|drop_statement
     ;
 create_statement
     : CREATE TABLE expression AS? select_statement?
