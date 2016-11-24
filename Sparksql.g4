@@ -1,9 +1,17 @@
 
 grammar Sparksql;
 
-root: select_statement
+root: select_statement|create_statement|drop_statement
     ;
-
+create_statement
+    : CREATE TABLE expression AS? select_statement?
+    ;
+drop_statement
+    : DROP TABLE drop_condition? expression
+    ;
+drop_condition
+    : IF EXISTS
+    ;
 select_statement
     : with_expression? query_expression order_by_clause? limit_clause?
     ;
