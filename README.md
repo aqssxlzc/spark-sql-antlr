@@ -1,7 +1,7 @@
 # spark-sql-antlr
 spark sql antlr parser 
-Now functional with CREATE and DROP clause.I will add muliple line process tomorrow.
 
+TBD: ADD CHINESE SUPPORT
 ## Install ANTLR
 
 $ cd /usr/local/lib
