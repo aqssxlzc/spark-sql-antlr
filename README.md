@@ -1,7 +1,7 @@
 # spark-sql-antlr
 spark sql antlr parser 
 
-TBD: ADD CHINESE SUPPORT
+Current version not support over 
 ## Install ANTLR
 
 $ cd /usr/local/lib

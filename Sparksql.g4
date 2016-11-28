@@ -186,6 +186,20 @@ aggregate_windowed_function
     | VARP '(' all_distinct_expression ')'
     | COUNT '(' ('*' | all_distinct_expression) ')'
     | COUNT_BIG '(' ('*' | all_distinct_expression) ')'
+    | YEAR '(' all_distinct_expression ')'
+    | MONTH '(' all_distinct_expression ')'
+    | HOUR '(' all_distinct_expression ')'
+    | REGEXP_EXTRACT '(' all_distinct_expression','all_distinct_expression','all_distinct_expression ')'  
+    | SUBSTR '(' all_distinct_expression','all_distinct_expression','all_distinct_expression ')'  
+    | FROM_UNIXTIME '(' all_distinct_expression ')'
+    | UNIX_TIMESTAMP '(' all_distinct_expression','all_distinct_expression ')'
+    | DATEDIFF '(' all_distinct_expression ')'
+    | PERCENTILE_APPROX '(' all_distinct_expression','all_distinct_expression ')'
+    | ARRAY '(' ('*' | all_distinct_expression) ')'
+    | TO_DATE '(' all_distinct_expression ')'
+    | PMOD '(' all_distinct_expression ')'
+    | LAG '(' all_distinct_expression','all_distinct_expression','all_distinct_expression ')'
+    | ROW_NUMBER '(' all_distinct_expression? ')'
     ;
 
 all_distinct_expression
@@ -377,6 +391,19 @@ simple_id
     | WORK
     | XML
     | XMLNAMESPACES
+    | YEAR
+    | MONTH
+    | HOUR
+    | REGEXP_EXTRACT
+    | SUBSTR
+    | FROM_UNIXTIME
+    | UNIX_TIMESTAMP
+    | DATEDIFF
+    | PERCENTILE_APPROX
+    | TO_DATE
+    | PMOD
+    | LAG
+    | ARRAY
     ;
 
 null_notnull
@@ -386,6 +413,21 @@ null_notnull
 
 
 // Lexer
+
+//ADD FOR HMW
+YEAR:                             Y E A R;
+MONTH:                            M O N T H;
+HOUR:                             H O U R;
+SUBSTR:                           S U B S T R;
+REGEXP_EXTRACT:                   R E G E X P '_' E X T R A C T;
+FROM_UNIXTIME:                    F R O M '_' U N I X T I M E;
+UNIX_TIMESTAMP:                   U N I X '_' T I M E S T A M P;
+DATEDIFF:                         D A T E D I F F;
+PERCENTILE_APPROX:                P E R C E N T I L E '_' A P P R O X;
+TO_DATE:                          T O '_' D A T E;
+PMOD:                             P M O D;
+LAG:                              L A G;
+ARRAY:                            A R R A Y;
 
 // Basic keywords (from https://msdn.microsoft.com/en-us/library/ms189822.aspx)
 LIMIT:                           L I M I T;
@@ -733,6 +775,10 @@ BIT_NOT:             '~';
 BIT_OR:              '|';
 BIT_AND:             '&';
 BIT_XOR:             '^';
+
+
+
+
 
 fragment LETTER:       [a-zA-Z_];
 fragment DEC_DOT_DEC:  (DEC_DIGIT+ '.' DEC_DIGIT+ |  DEC_DIGIT+ '.' | '.' DEC_DIGIT+);
