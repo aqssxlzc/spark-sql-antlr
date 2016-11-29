@@ -2,7 +2,17 @@
 grammar Sparksql;
 root:clause (';' clause)*
     ;
-clause: select_statement|create_statement|drop_statement
+clause: select_statement
+    |create_statement
+    |drop_statement
+    |use_statement
+    |alter_statement
+    ;
+alter_statement
+    :ALTER TABLE table_name CHANGE simple_id simple_id simple_id
+    ;
+use_statement
+    : USE simple_id
     ;
 create_statement
     : CREATE TABLE expression AS? select_statement?
@@ -49,11 +59,20 @@ column_name_list
 query_specification
     : SELECT (ALL | DISTINCT)? (TOP expression PERCENT? (WITH TIES)?)?
       select_list
+      (over_partition)?
       (INTO into_table=table_name)?
       (FROM table_source (',' table_source)*)?
       (WHERE where=search_condition)?
       (GROUP BY group_by_item (',' group_by_item)*)?
       (HAVING having=search_condition)?
+    ;
+
+over_partition
+    : OVER '(' partition_statement ')'
+    ;
+
+partition_statement
+    : PARTITION BY simple_id ORDER BY simple_id DESC
     ;
 
 union
@@ -63,6 +82,7 @@ union
 table_source
     : table_source_item_joined
     | '(' table_source_item_joined ')'
+    | '(' select_statement ')'
     ;
 
 table_source_item_joined
@@ -193,13 +213,16 @@ aggregate_windowed_function
     | SUBSTR '(' all_distinct_expression','all_distinct_expression','all_distinct_expression ')'  
     | FROM_UNIXTIME '(' all_distinct_expression ')'
     | UNIX_TIMESTAMP '(' all_distinct_expression','all_distinct_expression ')'
-    | DATEDIFF '(' all_distinct_expression ')'
+    | DATEDIFF '(' all_distinct_expression','all_distinct_expression ')'
     | PERCENTILE_APPROX '(' all_distinct_expression','all_distinct_expression ')'
     | ARRAY '(' ('*' | all_distinct_expression) ')'
     | TO_DATE '(' all_distinct_expression ')'
-    | PMOD '(' all_distinct_expression ')'
+    | PMOD '(' all_distinct_expression','all_distinct_expression ')'
     | LAG '(' all_distinct_expression','all_distinct_expression','all_distinct_expression ')'
     | ROW_NUMBER '(' all_distinct_expression? ')'
+    | LOG '(' all_distinct_expression? ')'
+    | LOG2 '(' all_distinct_expression? ')'
+    | CAST '(' all_distinct_expression? ')'
     ;
 
 all_distinct_expression
@@ -404,6 +427,9 @@ simple_id
     | PMOD
     | LAG
     | ARRAY
+    | LOG
+    | LOG2
+    | CHANGE
     ;
 
 null_notnull
@@ -428,6 +454,10 @@ TO_DATE:                          T O '_' D A T E;
 PMOD:                             P M O D;
 LAG:                              L A G;
 ARRAY:                            A R R A Y;
+LOG:                              L O G;
+LOG2:                             L O G '2';
+CHANGE:                           C H A N G E;
+
 
 // Basic keywords (from https://msdn.microsoft.com/en-us/library/ms189822.aspx)
 LIMIT:                           L I M I T;
