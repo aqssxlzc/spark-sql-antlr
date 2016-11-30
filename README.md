@@ -1,7 +1,10 @@
 # spark-sql-antlr
 spark sql antlr parser 
 
-Current version not support over 
+ADD SUPPORT FOR OVER PARTITION and SOME custom functions.
+the grammer is not complete covered.
+You may need additional effort for your using.
+
 ## Install ANTLR
 
 $ cd /usr/local/lib

@@ -1,6 +1,6 @@
 
 grammar Sparksql;
-root:clause (';' clause)*
+root: (clause ';' )*
     ;
 clause: select_statement
     |create_statement
@@ -59,7 +59,6 @@ column_name_list
 query_specification
     : SELECT (ALL | DISTINCT)? (TOP expression PERCENT? (WITH TIES)?)?
       select_list
-      (over_partition)?
       (INTO into_table=table_name)?
       (FROM table_source (',' table_source)*)?
       (WHERE where=search_condition)?
@@ -190,6 +189,8 @@ expression
     | expression op=('+' | '-' | '&' | '^' | '|') expression
     | expression comparison_operator expression
     | aggregate_windowed_function
+    | PARTITION BY expression(','expression)* (ORDER BY expression)? (DESC|ASC)?
+    | expression BY expression
     ;
 
 aggregate_windowed_function
@@ -200,6 +201,7 @@ aggregate_windowed_function
     | MAX '(' all_distinct_expression ')'
     | MIN '(' all_distinct_expression ')'
     | SUM '(' all_distinct_expression ')'
+    | '-'SUM '(' all_distinct_expression ')'
     | STDEV '(' all_distinct_expression ')'
     | STDEVP '(' all_distinct_expression ')'
     | VAR '(' all_distinct_expression ')'
@@ -215,14 +217,16 @@ aggregate_windowed_function
     | UNIX_TIMESTAMP '(' all_distinct_expression','all_distinct_expression ')'
     | DATEDIFF '(' all_distinct_expression','all_distinct_expression ')'
     | PERCENTILE_APPROX '(' all_distinct_expression','all_distinct_expression ')'
-    | ARRAY '(' ('*' | all_distinct_expression) ')'
+    | ARRAY '(' constant(','constant)* ')'
     | TO_DATE '(' all_distinct_expression ')'
     | PMOD '(' all_distinct_expression','all_distinct_expression ')'
     | LAG '(' all_distinct_expression','all_distinct_expression','all_distinct_expression ')'
     | ROW_NUMBER '(' all_distinct_expression? ')'
     | LOG '(' all_distinct_expression? ')'
     | LOG2 '(' all_distinct_expression? ')'
-    | CAST '(' all_distinct_expression? ')'
+    | CAST '(' simple_id AS DOUBLE ')'   
+    | STDDEV '(' all_distinct_expression? ')'
+    | EXP '(' all_distinct_expression? ')'
     ;
 
 all_distinct_expression
@@ -254,14 +258,18 @@ select_list_elem
     : (table_name '.')? ('*' | '$' (IDENTITY | ROWGUID))
     | column_alias '=' expression
     | expression (AS? column_alias)?
+    | expression OVER '('expression')' (AS column_alias)?
     ;
 
 full_column_name
-    : (table_name '.')? column_name
+    : (table_name '.')? column_name ('['number']')?
     ;
 
 column_name
-    : id_1
+    : id_1 SQUARE_BRACKET_ID?
+    ;
+
+column_index: '[' number ']'
     ;
 
 case_expr
@@ -302,6 +310,7 @@ id_1  : simple_id
     | DOUBLE_QUOTE_ID
     | SQUARE_BRACKET_ID
     ;
+
 
 comparison_operator
     : '=' | '>' | '<' | '<' '=' | '>' '=' | '<' '>' | '!' '=' | '!' '>' | '!' '<'
@@ -430,6 +439,8 @@ simple_id
     | LOG
     | LOG2
     | CHANGE
+    | STDDEV
+    | EXP
     ;
 
 null_notnull
@@ -457,7 +468,8 @@ ARRAY:                            A R R A Y;
 LOG:                              L O G;
 LOG2:                             L O G '2';
 CHANGE:                           C H A N G E;
-
+STDDEV:                           S T D D E V;
+EXP:                              E X P;
 
 // Basic keywords (from https://msdn.microsoft.com/en-us/library/ms189822.aspx)
 LIMIT:                           L I M I T;
